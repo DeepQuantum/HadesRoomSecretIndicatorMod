@@ -1,2 +1,2 @@
 Load Priority 50
-Import "RoomSecretIndicator.lua"
+Import "Scripts"
