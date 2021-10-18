@@ -90,7 +90,7 @@ function showIndicatorText( text )
     end
 
 
-    local customTextIndicatorId = CreateScreenObstacle({ Name = "BlankObstacle", X = ScreenCenterX, Y = ScreenCenterY + 450 }) 
+    local customTextIndicatorId = CreateScreenObstacle({ Name = "BlankObstacle", X = ScreenCenterX, Y = ScreenCenterY + 250 }) 
     CreateTextBox({ Id = customTextIndicatorId, Text = text, Justification="CENTER", ShadowColor = {0, 0, 0, 128}, ShadowOffset = {0, 2}, ShadowBlur = 0, 
     OutlineThickness = 1, OutlineColor = {1, 1, 1, 1}, 
     Font = "SpectralSCLightTitling", FontSize = textScale, Color = {255,255,255,255},}) 
