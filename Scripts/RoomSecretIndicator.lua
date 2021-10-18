@@ -19,7 +19,6 @@ end
 
 function checkRoomSecrets ()
 
-    wait(0.5)
     local finalMessage = ""
 
     currentRoom = CurrentRun.CurrentRoom
