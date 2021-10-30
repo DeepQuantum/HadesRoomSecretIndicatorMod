@@ -1,31 +1,37 @@
 ModUtil.RegisterMod("RoomSecretIndicator")
 
 local config = {
+    ModName = "RoomSecretIndicator",
     showGates = true,
     showFishingPoint = true,
     showInfernalTrove = true,
-    revealTroveReward = false,
-    showWellShop = true,
     showSellShop = true,
+    showWellShop = true,
+    revealTroveReward = true,
 }
 RoomSecretIndicator.config = config
 
+ModUtil.LoadOnce(function ()
+    if ModConfigMenu then
+        ModConfigMenu.Register( config )
+    end
+end)
+
 local baseDoUnlockRoomExits = DoUnlockRoomExits
 function DoUnlockRoomExits ( run, room )
-    
     baseDoUnlockRoomExits( run, room )
-    thread( checkRoomSecrets ) 
+    thread( CheckRoomSecrets )
 end
 
-function checkRoomSecrets ()
+function CheckRoomSecrets ()
 
     local finalMessage = ""
 
-    currentRoom = CurrentRun.CurrentRoom
+    local currentRoom = CurrentRun.CurrentRoom
 
     if config.showInfernalTrove then
         if currentRoom.ChallengeSwitch ~= nil then
-            secretName = "Inferal Trove"
+            local secretName = "Inferal Trove"
             if config.revealTroveReward then
                 local rewardType = ""
                 if currentRoom.ChallengeSwitch.RewardType == "MetaPoints" then
@@ -37,42 +43,42 @@ function checkRoomSecrets ()
                 end
                 secretName = secretName .. "(" .. rewardType .. ")"
             end
-            finalMessage = concatToFinalMessage( finalMessage, secretName )
+            finalMessage = ConcatToFinalMessage( finalMessage, secretName )
         end
     end
 
     if config.showWellShop then
         if string.find( currentRoom.Name, "PostBoss" ) then return end
         if currentRoom.WellShop ~= nil then
-            finalMessage = concatToFinalMessage( finalMessage, "Well of Charon" )
+            finalMessage = ConcatToFinalMessage( finalMessage, "Well of Charon" )
         end
     end
 
     if config.showSellShop then
         if currentRoom.SellTraitShop ~= nil then
-            finalMessage = concatToFinalMessage( finalMessage, "Sell trait Shop" )
+            finalMessage = ConcatToFinalMessage( finalMessage, "Pool of Purging" )
         end
     end
 
     if config.showFishingPoint then
         if currentRoom.ForceFishing and currentRoom.FishingPointId and IsUseable({ Id = currentRoom.FishingPointId }) then
-            finalMessage = concatToFinalMessage( finalMessage, "Fishing Point" )
+            finalMessage = ConcatToFinalMessage( finalMessage, "Fishing Point" )
         end
     end
 
     if config.showGates then
         if currentRoom.ForceSecretDoor then
-            finalMessage = concatToFinalMessage( finalMessage, "Chaos Gate" )
+            finalMessage = ConcatToFinalMessage( finalMessage, "Chaos Gate" )
         end
         if currentRoom.ForceShrinePointDoor then
-            finalMessage = concatToFinalMessage( finalMessage, "Erebus Gate" )
+            finalMessage = ConcatToFinalMessage( finalMessage, "Erebus Gate" )
         end
     end
 
-    showIndicatorText( finalMessage )
+    ShowIndicatorText( finalMessage )
 end
 
-function concatToFinalMessage ( currentMessage, secretName )
+function ConcatToFinalMessage ( currentMessage, secretName )
 
     if currentMessage ~= "" then
         return currentMessage .. "," .. secretName
@@ -81,18 +87,17 @@ function concatToFinalMessage ( currentMessage, secretName )
     end
 end
 
-function showIndicatorText( text )
+function ShowIndicatorText( text )
 
     local textScale = "30"
     if string.len( text ) >= 25 then
         textScale = "20"
     end
 
-
-    local customTextIndicatorId = CreateScreenObstacle({ Name = "BlankObstacle", X = ScreenCenterX, Y = ScreenCenterY + 250 }) 
-    CreateTextBox({ Id = customTextIndicatorId, Text = text, Justification="CENTER", ShadowColor = {0, 0, 0, 128}, ShadowOffset = {0, 2}, ShadowBlur = 0, 
-    OutlineThickness = 1, OutlineColor = {1, 1, 1, 1}, 
-    Font = "SpectralSCLightTitling", FontSize = textScale, Color = {255,255,255,255},}) 
+    local customTextIndicatorId = CreateScreenObstacle({ Name = "BlankObstacle", X = ScreenCenterX, Y = ScreenCenterY + 250 })
+    CreateTextBox({ Id = customTextIndicatorId, Text = text, Justification="CENTER", ShadowColor = {0, 0, 0, 128}, ShadowOffset = {0, 2}, ShadowBlur = 0,
+    OutlineThickness = 1, OutlineColor = {1, 1, 1, 1},
+    Font = "SpectralSCLightTitling", FontSize = textScale, Color = {255,255,255,255},})
     wait(0.5)
 	ModifyTextBox({ Id = customTextIndicatorId, FadeTarget = 0.0, FadeDuration = 3.0, AutoSetDataProperties = false })
 	wait(3.0)
